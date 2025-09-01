@@ -4,7 +4,14 @@ This is the repository for reproducing the findings in the Master thesis "Explai
 
 # Prerequisits
 
-The implementation bases on Python 3.9.13. The external packages required to run the evaluation can be found in the [requirements.txt](/requirements.txt). To install the requirements execute `pip install -r /requirements.txt`. 
+The implementation bases on Python 3.9.13 and CUDA 12.4. The external packages required to run the evaluation can be found in the [requirements.txt](/requirements.txt). To install the requirements execute `pip install -r /requirements.txt`. 
+
+Additionally, execute 
+```
+pip install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cu124
+
+pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.6.0+cu124.html
+```
 
 # Content
 
@@ -72,7 +79,7 @@ in the beginning, makes use of the MOOC configuration.
 
 ## 3. Run training
 
-The trainig is located in the training.py of the evaluation folder. It can be executed using 
+The training is located in the training.py of the evaluation folder. It can be executed using 
 
 ```
 python -m Evaluation.*.training
