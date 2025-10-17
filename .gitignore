@@ -2,3 +2,8 @@
 /Data/*
 /Saved_models/*
 /Logs/*
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.pyc
+*$py.class
