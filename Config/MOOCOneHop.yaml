@@ -20,6 +20,7 @@ ModelConfig:
   dropout: 0.1
   task: classification
   trained_model_path: Saved_models\\MOOCOneHop\\TGAT\\TGAT_seed0.pkl
+  omit_normalization: False
 
 DataConfig:
   dataset_name: MOOCOneHop
@@ -28,6 +29,7 @@ DataConfig:
   node_feat_file: \\mooc_node.npy
   index_file: \\mooc.csv
   feature_names_file: ""
+  node_names_file: ""
   is_directed: False
 
 TrainConfig:

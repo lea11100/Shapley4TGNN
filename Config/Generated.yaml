@@ -1,44 +1,44 @@
 ModelConfig:
   model_name: TGAT
   device: "cuda:0"
-  num_neighbors: 20
+  num_neighbors: 5
   sample_neighbor_strategy: recent
   time_scaling_factor: 1e-6
   num_walk_heads: 8
-  num_heads: 2
+  num_heads: 1
   num_layers: 2
-  num_reg_layers: 2
-  hidden_reg_layers_dim: 172
-  node_dim: 172
+  num_reg_layers: 1
+  hidden_reg_layers_dim: 6
+  node_dim: 10
   walk_length: 2
   time_gap: 100
-  time_feat_dim: 100
+  time_feat_dim: 10
   position_feat_dim: 16
   patch_size: 1
   channel_embedding_dim: 64
   max_input_sequence_length: 32
-  dropout: 0.1
-  task: classification
-  trained_model_path: Saved_models\\Reddit\\TGAT\\TGAT_seed0.pkl
-  omit_normalization: False
+  dropout: 0.0
+  task: regression
+  trained_model_path: Saved_models/Generated/TGAT/seed0/TGAT_seed0.pkl
+  omit_normalization: True
 
 DataConfig:
-  dataset_name: Reddit
-  folder: Data\\Reddit
-  edge_feat_file: \\Reddit.npy
-  node_feat_file: \\Reddit_node.npy
-  index_file: \\Reddit.csv
+  dataset_name: Generated
+  folder: Data/Generated
+  edge_feat_file: /generated.npy
+  node_feat_file: /generated_node.npy
+  index_file: /generated.csv
   feature_names_file: ""
-  node_names_file: ""
+  node_names_file: /generated_node_names.npy
   is_directed: False
 
 TrainConfig:
-  num_epochs: 100  
-  batch_size: 200
+  num_epochs: 10000
+  batch_size: 2000
   optimizer: Adam
-  weight_decay: 0.0
-  patience: 15
-  learning_rate: 0.0001
+  weight_decay: 0.005
+  patience: 100
+  learning_rate: 0.001
   val_ratio: 0.15
   test_ratio: 0.15
   num_runs: 1
@@ -46,7 +46,7 @@ TrainConfig:
 
 TempMEConfig:
   bs: 500
-  n_epoch: 10
+  n_epoch: 100
   out_dim: 40
   hid_dim: 64
   temp: 0.07
@@ -54,10 +54,10 @@ TempMEConfig:
   lr: 0.001
   drop_out: 0.1
   if_bern: true
-  weight_decay: 0
+  weight_decay: 0.0001
   beta: 0.5
   device: "cuda:0"
 
 TGNNExplainerConfig:
-  num_rollouts: 500
-  min_atoms: 6
+  num_rollouts: 50
+  min_atoms: 1

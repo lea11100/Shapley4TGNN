@@ -16,7 +16,7 @@ CONFIG = CONFIG()
 
 def _set_tgat_data(all_events: DataFrame, target_event_idx: Union[int, List]):
     """ supporter for tgat """
-    if isinstance(target_event_idx, (int, np.int64)):
+    if isinstance(target_event_idx, (int, np.integer)):
 
         edge = all_events[all_events.idx == target_event_idx]
         target_u = edge.u.values[0]
@@ -128,7 +128,7 @@ class TGNNRewardWraper(object):
         # import ipdb; ipdb.set_trace()
 
         if(CONFIG.model.task == "regression"):
-            fid_inv = -1 * np.abs(fidelity_inv_tg(self.original_scores, scores_petb))
+            fid_inv = np.abs(fidelity_inv_tg(self.original_scores, scores_petb))
         else:
             fid_inv = fidelity_inv_tg(self.original_scores, scores_petb)
         return fid_inv

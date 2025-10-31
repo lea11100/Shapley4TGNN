@@ -22,6 +22,8 @@ class DataConfig:
     '''File name with extention for graph strucuture'''
     feature_names_file: str 
     '''File name with extention for feature names. If blank, feature names are not used for plotting an explanation.'''
+    node_names_file: str 
+    '''File name with extention for node names. If blank, node names are not used for plotting an explanation.'''
 
 @dataclass
 class TrainConfig:
@@ -120,6 +122,8 @@ class ModelConfig:
     '''Task to be performed (e.g., 'link prediction')'''
     trained_model_path: str 
     '''Path to the trained model. This can be set after training to inform the explainers where the model is located.'''
+    omit_normalization: bool  
+    '''Whether to omit cosine function and layer normalization in TGAT model (enables better extrapolation on regression tasks)'''
 
 @dataclass
 class TGNNExplainerConfig:

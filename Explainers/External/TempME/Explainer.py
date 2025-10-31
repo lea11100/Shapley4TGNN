@@ -88,7 +88,7 @@ class TempMEExplainer(Explainer):
                                         betas=(0.9, 0.999), eps=1e-8,
                                         weight_decay=CONFIG.tempME.weight_decay)
         
-        if CONFIG.model.task == "Regression":
+        if CONFIG.model.task == "regression":
             criterion = torch.nn.MSELoss()
         else: 
             criterion = torch.nn.BCEWithLogitsLoss()

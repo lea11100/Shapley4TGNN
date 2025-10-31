@@ -8,6 +8,8 @@ from abc import ABC, abstractmethod
 from typing import Tuple, List, Optional
 
 from ..utils.utils import NeighborSampler, BatchSubgraphs
+from Config.config import CONFIG
+CONFIG = CONFIG()
 
 class TimeEncoder(nn.Module):
 
@@ -45,8 +47,10 @@ class TimeEncoder(nn.Module):
             return torch.zeros((rel_t.shape[0],rel_t.shape[1], 0), device=timestamps.device)
 
         # Tensor, shape (batch_size, seq_len, time_dim)
-        output = torch.cos(self.w(rel_t))
-
+        if(CONFIG.model.omit_normalization):
+            output = self.w(rel_t)
+        else:
+            output = torch.cos(self.w(rel_t))
         return output
 
 
@@ -359,7 +363,10 @@ class MultiHeadAttention(nn.Module):
         output = self.dropout(self.residual_fc(attention_output))
 
         # Tensor, shape (batch_size, 1, node_feat_dim + time_feat_dim)
-        output = self.layer_norm(output + residual)
+        if not CONFIG.model.omit_normalization:
+            output = output + residual
+        else:
+            output = self.layer_norm(output + residual)
 
         # Tensor, shape (batch_size, node_feat_dim + time_feat_dim)
         output = output.squeeze(dim=1)

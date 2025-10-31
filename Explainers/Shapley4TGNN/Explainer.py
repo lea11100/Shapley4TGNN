@@ -41,9 +41,10 @@ class ShapleyExplainerEvents(Explainer):
         Matrix of event-level features.
     """
 
-    def __init__(self, model: TGNN, neighbor_finder: NeighborSampler, data: Data, event_features: np.ndarray):
+    def __init__(self, model: TGNN, neighbor_finder: NeighborSampler, data: Data, event_features: np.ndarray, node_names: Optional[np.ndarray] = None):
         super().__init__(model, neighbor_finder, data)
         self.event_features = event_features
+        self.node_names = node_names
 
     def initialize(self, label_for_prediction: Optional[str] = None):
         """
@@ -116,10 +117,10 @@ class ShapleyExplainerEvents(Explainer):
             return y.cpu().detach().numpy().reshape((-1,))
 
         # Human-readable feature names for events
-        if CONFIG.model.task == "classification": #reduce event ID by 1 since baseline datasets do not contain the zero event.
-            labels = [f"{self.data.types[e-1]}: {self.data.src_node_ids[e-1]} to {self.data.dst_node_ids[e-1]} @ {self.data.node_interact_times[e-1]}" for e in event_ids]
+        if self.node_names is not None:
+            labels = [f"{self.node_names[self.data.src_node_ids[e-1]]} to {self.node_names[self.data.dst_node_ids[e-1]]} @ {self.data.node_interact_times[e-1]}" for e in event_ids]
         else:
-            labels = [f"{self.data.types[e]}: {self.data.src_node_ids[e]} to {self.data.dst_node_ids[e]} @ {self.data.node_interact_times[e]}" for e in event_ids]
+            labels = [f"{self.data.src_node_ids[e-1]} to {self.data.dst_node_ids[e-1]} @ {self.data.node_interact_times[e-1]}" for e in event_ids]
 
         # Instantiate KernelSHAP on binary event-inclusion mask
         explainer = shap.explainers.KernelExplainer(
@@ -179,12 +180,14 @@ class ShapleyExplainerFeatures(Explainer):
 
     def __init__(self, model: TGNN, neighbor_finder: NeighborSampler, data: Data,
                  event_features: np.ndarray, feature_names: Optional[Union[np.ndarray, bool]] = None,
-                 shapley_alg="KernelSHAP", top_k: Optional[int] = None):
+                 shapley_alg="KernelSHAP", top_k: Optional[int] = None,
+                 node_names: Optional[np.ndarray] = None):
         super().__init__(model, neighbor_finder, data)
         self.event_features = event_features
         self.feature_names = feature_names
         self.shapley_alg = shapley_alg
         self.is_feature_level = True
+        self.node_names = node_names
         self.top_k = top_k
 
     def initialize(self, label_for_prediction: Optional[str] = None):
@@ -209,7 +212,7 @@ class ShapleyExplainerFeatures(Explainer):
         """
         explanation_flatten, remaining_ids, _, _ = explanation
         num_players_per_event = self.event_features.shape[1] + 2  # 2 extra for structure & timing
-        players = [(x[0], x[3]) for x in explanation_flatten]
+        players = [(x[0], x[5]) for x in explanation_flatten]
         players = np.array(players, dtype=int)
 
         # Add players from remaining (unexplained) events
@@ -285,19 +288,16 @@ class ShapleyExplainerFeatures(Explainer):
             remaining_shapley_values = []
 
         # Prepare events for explanation
-        event_timings = self.data.dataset.ts[ids_to_explain] if self.data.dataset is not None else []
-        event_types = self.neighbor_finder.edge_labels[ids_to_explain]
-        if CONFIG.model.task == "classification": #reduce event ID by 1 since baseline datasets do not contain the zero event.
-            event_timings = self.data.dataset.ts[ids_to_explain-1] if self.data.dataset is not None else []
-            event_types = self.neighbor_finder.edge_labels[ids_to_explain-1]
-        else:
-            event_timings = self.data.dataset.ts[ids_to_explain] if self.data.dataset is not None else []
-            event_types = self.neighbor_finder.edge_labels[ids_to_explain]
-        events = list(zip(ids_to_explain, event_types, event_timings))
+        
+        event_timings = self.data.dataset.ts[ids_to_explain-1] if self.data.dataset is not None else []
+        event_srcs = self.data.src_node_ids[ids_to_explain-1]
+        event_dsts = self.data.dst_node_ids[ids_to_explain-1]
+        event_types = self.neighbor_finder.edge_labels[ids_to_explain-1]
+        events = list(zip(ids_to_explain, event_srcs, event_dsts, event_types, event_timings))
         pbar = tqdm(events, total=len(events), desc='Explain event') if not silent else events
 
         explanation_flatten = []
-        for e_id, label, timing in pbar:
+        for e_id, s, d, label, timing in pbar:
             if self.shapley_alg == "KernelSHAP":
                 expl = self.explain_event_kernel(
                     src, dst, timestamp, e_id, subgraphs_src, subgraphs_dst, imputation_data, silent
@@ -316,10 +316,18 @@ class ShapleyExplainerFeatures(Explainer):
                 raise NotImplementedError()
 
             # Append tuples for easier filtering later
-            explanation_flatten.extend([
-                (e_id, label, timing, features[i], features_values[i], values[i])
-                for i, _ in enumerate(features)
-            ])
+            if self.node_names is not None:
+                explanation_flatten.extend([
+                    (e_id, self.node_names[s], self.node_names[d], label, timing, features[i],
+                     features_values[i],
+                     values[i])
+                    for i, _ in enumerate(features)
+                ])
+            else:
+                explanation_flatten.extend([
+                    (e_id, s, d, label, timing, features[i], features_values[i], values[i])
+                    for i, _ in enumerate(features)
+                ])
 
         # Sort by absolute importance
         explanation_flatten = sorted(explanation_flatten, key=lambda x: np.abs(x[-1]), reverse=True)
@@ -697,7 +705,7 @@ class ShapleyExplainerFeatures(Explainer):
         if CONFIG.model.task == "classification": #reduce event ID by 1 since baseline datasets do not contain the zero event.
             d = np.concat(([1, self.data.node_interact_times[event_id-1]], event_features))
         else:
-            d = np.concat(([1, self.data.node_interact_times[event_id]], event_features))
+            d = np.concat(([1, self.data.node_interact_times[event_id-1]], event_features))
         return explainer(d.reshape(1, -1), silent=silent)
 
 

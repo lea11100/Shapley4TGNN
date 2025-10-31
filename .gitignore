@@ -1,9 +1,15 @@
-.venv
+/.venv39/*
 /Data/*
 /Saved_models/*
+/Documents/*
 /Logs/*
 __pycache__/
 **/__pycache__/
 *.py[cod]
 *.pyc
 *$py.class
+*.ipynb_checkpoints
+.DS_Store
+test.ipynb
+*output.pdf
+launch.json

@@ -194,7 +194,7 @@ class Explainer(ABC):
                 "Original prediction", "Ground truth", "y",
                 "Sparsity thresholds", "Fidelity to prediction",
                 "Fidelity to prediction (logit)",
-                "Deviation to ground truth", "GEF"
+                "Deviation to ground truth", "GEF", "Accuracy"
             ]
         )
         result_mean_pd["Remove technique"] = "Mean"
@@ -205,7 +205,7 @@ class Explainer(ABC):
                 "Original prediction", "Ground truth", "y",
                 "Sparsity thresholds", "Fidelity to prediction",
                 "Fidelity to prediction (logit)",
-                "Deviation to ground truth", "GEF"
+                "Deviation to ground truth", "GEF", "Accuracy"
             ]
         )
         result_zero_pd["Remove technique"] = "Zero"
@@ -449,8 +449,10 @@ class ExplanationResult:
 
         fidelity = -np.abs(original_prediction - y)
         distance_to_ground_truth = -np.abs(ground_truth - y)
+        
+        accuracy = ((y >= 0.5) == (original_prediction >= 0.5)).astype(float)
 
-        result = np.zeros((sparsity_thresholds.shape[0], 7))
+        result = np.zeros((sparsity_thresholds.shape[0], 8))
         result[:, 0] = original_prediction.reshape((-1,))
         result[:, 1] = ground_truth
         result[:, 2] = y.reshape((-1,))
@@ -458,6 +460,7 @@ class ExplanationResult:
         result[:, 4] = fidelity.reshape((-1,))
         result[:, 5] = fidelity2.reshape((-1,))
         result[:, 6] = distance_to_ground_truth.reshape((-1,))
+        result[:, 7] = accuracy.reshape((-1,))
 
         return result
 
@@ -570,7 +573,7 @@ def calc_mean_timing(timestamp: int, subgraph: BatchSubgraphs, imputation_data: 
                 imputation_data[id][1] = new_ts
 
 
-def calc_auc(dataframes: List[pd.DataFrame], metric: str, remove_technique: str):
+def calc_auc(dataframes: List[pd.DataFrame], metric: str, remove_technique: str, no_adjust: bool = False) -> List[float]:
     """
     Compute the Area Under the Curve (AUC) for a given metric vs sparsity thresholds.
 
@@ -585,7 +588,7 @@ def calc_auc(dataframes: List[pd.DataFrame], metric: str, remove_technique: str)
     minimum = min([d[metric].min() for d in dataframes])
     for d in dataframes:
         sparsites = d.loc[d["Remove technique"] == remove_technique, "Sparsity thresholds"]
-        values = d.loc[d["Remove technique"] == remove_technique, metric] - minimum
+        values = d.loc[d["Remove technique"] == remove_technique, metric] - minimum if not no_adjust else d.loc[d["Remove technique"] == remove_technique, metric]
         a = auc(sparsites, values)
         aucs.append(a)
     return aucs

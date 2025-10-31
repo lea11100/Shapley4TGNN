@@ -59,7 +59,7 @@ def _prepare_dataset(explanation_flatten: list, k: int, base_date:Optional[date]
     # Construct initial DataFrame
     df = pd.DataFrame(
         explanation_flatten,
-        columns=["Edge", "Edge_type", "Timing", "Feat_name", "Feat_value", "Shap_value"]
+        columns=["Edge", "Src", "Dst", "Edge_type", "Timing", "Feat_name", "Feat_value", "Shap_value"]
     )
 
     # Remove zero contributions
@@ -72,9 +72,9 @@ def _prepare_dataset(explanation_flatten: list, k: int, base_date:Optional[date]
     # Sum Shapley values by edge to compute total contribution
     df_sum = df.groupby("Edge", observed=False).sum()
     df_sum[["Timing", "Feat_name", "Feat_value"]] = [0, "Sum", 0]
-    df_sum = df_sum.reset_index(names="Edge")
-    df_sum = df_sum.drop(columns=["Edge_type", "Timing"])
-    df_sum = df_sum.merge(df[["Edge", "Edge_type", "Timing"]].drop_duplicates(),
+    df_sum = df_sum.reset_index(names=["Edge"])
+    df_sum = df_sum.drop(columns=["Edge_type", "Timing", "Src", "Dst"])
+    df_sum = df_sum.merge(df[["Edge", "Edge_type", "Timing", "Src", "Dst"]].drop_duplicates(),
                           on="Edge", how="left")
 
     # Extract top-k features by absolute Shapley value for each edge
@@ -116,7 +116,7 @@ def _prepare_dataset(explanation_flatten: list, k: int, base_date:Optional[date]
     # Special labels for 'Sum' and 'Others'
     df_top_k_per_edge.loc[df_top_k_per_edge.IsSum, "Label_feat"] = \
         df_top_k_per_edge[df_top_k_per_edge.IsSum].apply(
-            lambda x: f"{x.Edge_type} ({x.Edge}) @ {int(x.Timing) if base_date is None else base_date + timedelta(days=x.Timing)}", axis=1
+            lambda x: f"{x.Src} to {x.Dst} @ {int(x.Timing) if base_date is None else base_date + timedelta(days=x.Timing)}", axis=1
         )
     df_top_k_per_edge.loc[df_top_k_per_edge.IsOthers, "Label_feat"] = "Others"
 
@@ -189,7 +189,7 @@ def waterfall(
     # Prepare dataset with top-k, Others, and Sum
     df_top_k_per_edge = _prepare_dataset(explanation_flatten, k, base_date)
     if(remaining_shapley_values is not None and remaining_ids is not None):
-        df_top_k_per_edge.loc[-1] = [0, "", 0, "Other events", 0.0, np.sum(remaining_shapley_values), np.abs(np.sum(remaining_shapley_values)), True, True, "Other events"]  # adding a row
+        df_top_k_per_edge.loc[-1] = [0,0,0, "", 0, "Other events", 0.0, np.sum(remaining_shapley_values), np.abs(np.sum(remaining_shapley_values)), True, True, "Other events"]  # adding a row
         df_top_k_per_edge.index = df_top_k_per_edge.index + 1  # shifting index
         df_top_k_per_edge.sort_index(inplace=True) 
     num_edges = df_top_k_per_edge.Edge.drop_duplicates().shape[0]
@@ -201,11 +201,7 @@ def waterfall(
     start_sum = baseline  # running prediction for 'Sum' rows
 
     # Calculate scaling for arrowhead width
-    xlen = plt.xlim()[1] - plt.xlim()[0]
-    bbox = ax.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
-    width = bbox.width
-    bbox_to_xscale = xlen / width
-    hl_scaled = bbox_to_xscale * head_length
+    hl_scaled = head_length * df_top_k_per_edge.Shap_value.abs().max()
 
     # Plot bars and arrows
     for i, row in df_top_k_per_edge.sort_index(ascending=False).reset_index(drop=True).sort_index(ascending=False).iterrows():

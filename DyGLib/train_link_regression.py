@@ -16,7 +16,7 @@ from DyGLib.models.CAWN import CAWN
 from DyGLib.models.TCL import TCL
 from DyGLib.models.GraphMixer import GraphMixer
 from DyGLib.models.DyGFormer import DyGFormer
-from DyGLib.models.modules import MergeLayer, MLPClassifier, NeuralNetworkDst, TGNN
+from DyGLib.models.modules import MergeLayer, MLPClassifier, NeuralNetworkSrcDst, TGNN
 from DyGLib.utils.utils import set_random_seed, convert_to_gpu, get_parameter_sizes, create_optimizer, BatchSubgraphs
 from DyGLib.utils.utils import get_neighbor_sampler, compute_stats, NeighborSampler
 from DyGLib.evaluate_models_utils import evaluate_model_link_regression
@@ -241,9 +241,8 @@ def train(modelConfig: ModelConfig, dataConfig: DataConfig, trainConfig: TrainCo
         # ---------------------
         # CREATE FINAL MODEL (TGNN wrapper + regression head)
         # ---------------------
-        regressor = NeuralNetworkDst(
+        regressor = NeuralNetworkSrcDst(
             input_dim=node_raw_features.shape[1],
-            dropout=modelConfig.dropout,
             num_layers=modelConfig.num_reg_layers,
             hidden_dim=modelConfig.hidden_reg_layers_dim
         )
