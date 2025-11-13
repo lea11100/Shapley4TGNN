@@ -8,6 +8,6 @@
 
 
 module load lang/Python/3.9.5-GCCcore-10.3.0
-module load system/CUDA/12.0.0
+module load system/CUDA/12.4.1
 source .venv/bin/activate
 python experiments/omniopt-vs-nsga2.py
