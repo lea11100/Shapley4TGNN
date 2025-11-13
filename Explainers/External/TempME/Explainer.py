@@ -195,7 +195,7 @@ class TempMEExplainer(Explainer):
 
 
         edge_id = self.data.edge_ids[mask][0]
-        edge_id = np.where(self.edges == edge_id)[0] + 1
+        edge_id = np.where(self.edges == edge_id)[0]
 
         subgraph_src, subgraph_tgt, subgraph_bgd, walks_src, walks_tgt, walks_bgd, dst_l_fake = get_item(self.pack, edge_id)
         src_edge, tgt_edge, bgd_edge = get_item_edge(self.edge, edge_id)
@@ -229,6 +229,11 @@ class TempMEExplainer(Explainer):
         full_subgraph, src_subgraph, dst_subgraph = explanation
         edges = np.concat(full_subgraph.events, axis=1).flatten()
         attentions = torch.concat(full_subgraph.event_attention, dim=1).flatten()
+        
+        
+        shuffle_mask = torch.randperm(len(edges))
+        edges = edges[shuffle_mask]
+        attentions = attentions[shuffle_mask]
 
         mask = edges != 0
         edges = edges[np.where(mask)]

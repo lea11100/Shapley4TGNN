@@ -126,7 +126,7 @@ class ShapleyExplainerEvents(Explainer):
         explainer = shap.explainers.KernelExplainer(
             val, data=np.zeros((1, len(event_ids))), feature_names=labels
         )
-        shap_values = explainer(np.array([event_ids]).reshape(1, -1), silent=silent)
+        shap_values = explainer(np.array([event_ids]).reshape(1, -1), silent=silent,  l1_reg=False)
 
         return event_ids, shap_values
 
@@ -147,6 +147,11 @@ class ShapleyExplainerEvents(Explainer):
         event_ids, shap_values = explanation
         events = event_ids.reshape((-1,))
         shap_values = shap_values.values.reshape((-1,))
+        
+        shuffle_mask = torch.randperm(len(events))
+        events = events[shuffle_mask]
+        shap_values = shap_values[shuffle_mask]
+        
         sorting = (-np.abs(shap_values)).argsort()
         events = events[sorting]
 
@@ -706,7 +711,7 @@ class ShapleyExplainerFeatures(Explainer):
             d = np.concat(([1, self.data.node_interact_times[event_id-1]], event_features))
         else:
             d = np.concat(([1, self.data.node_interact_times[event_id-1]], event_features))
-        return explainer(d.reshape(1, -1), silent=silent)
+        return explainer(d.reshape(1, -1), silent=silent, l1_reg=False)
 
 
     def explain_event_permutation(

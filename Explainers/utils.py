@@ -368,6 +368,16 @@ class ExplanationResult:
 
         subgraph_src.keep_features(coalitions_per_sparsity, default_values)
         subgraph_dst.keep_features(coalitions_per_sparsity, default_values)
+        
+        events_per_sparsity = [np.unique(c[:,0]) for c in coalitions_per_sparsity]   
+        #Pad array to homogeneous shape
+        max_len = max([len(e) for e in events_per_sparsity])
+        for i in range(len(events_per_sparsity)):
+            events_per_sparsity[i] = np.concat([events_per_sparsity[i], np.zeros((max_len - len(events_per_sparsity[i]),), dtype=int)])
+        events_per_sparsity = np.array(events_per_sparsity)
+        subgraph_src.keep_events(events_per_sparsity, default_values)
+        subgraph_dst.keep_events(events_per_sparsity, default_values)
+        
         result = self._run_eval(src, dst, timestamp, ground_truth, subgraph_src, subgraph_dst, sg_src, sg_dst, sparsity_thresholds, original_prediction)
         return result, coalitions_per_sparsity
 
