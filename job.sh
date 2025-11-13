@@ -6,13 +6,14 @@
 #SBATCH --mem-per-cpu=2G
 #SBATCH -J "Shapley_Experiment"
 #SBATCH -p gpu
-#SBATCH --gres=gpu:h100:3
+#SBATCH --gres=gpu:a100:3
 #SBATCH -A hpc-prf-wiki
 
 
 module load lang/Python/3.9.5-GCCcore-10.3.0
 module load system/CUDA/12.4.1
 source .venv/bin/activate
-python -m Evaluation.eval --dataset MOOC --explainer all &
-python -m Evaluation.eval --dataset Reddit --explainer all &
-python -m Evaluation.eval --dataset Wikipedia --explainer all &
+srun python -m Evaluation.eval --dataset MOOC --explainer all &
+srun python -m Evaluation.eval --dataset Reddit --explainer all &
+srun python -m Evaluation.eval --dataset Wikipedia --explainer all &
+wait
