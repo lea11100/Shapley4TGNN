@@ -89,7 +89,7 @@ model.load_state_dict(torch.load(trained_model_path, weights_only=True))
 model.to(CONFIG.model.device)
 model.eval()
 
-num_samples = 100
+num_samples = 2
 
 def get_edge_by_id(link_index):
     src, dst, time_stamp, edge_id, true_value = full_data.src_node_ids[link_index], full_data.dst_node_ids[link_index], full_data.node_interact_times[link_index], full_data.edge_ids[link_index], 1 # type: ignore
