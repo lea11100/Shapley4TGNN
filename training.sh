@@ -15,7 +15,7 @@
 module load lang/Python/3.9.5-GCCcore-10.3.0
 module load system/CUDA/12.4.1
 source .venv/bin/activate
-python -m Evaluation.MOOC.training &
-python -m Evaluation.Reddit.training &
-python -m Evaluation.Wikipedia.training &
+srun python -m Evaluation.MOOC.training &
+srun python -m Evaluation.Reddit.training &
+srun python -m Evaluation.Wikipedia.training &
 wait
