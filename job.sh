@@ -1,9 +1,12 @@
 #!/bin/bash
-#SBATCH -t 2:00:00
-#SBATCH -N 2
-#SBATCH -n 20
-#SBATCH -J "Shapley_Experiment"
+#SBATCH -t 18:00:00
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=32G
+#SBATCH -J "Shapley_Experiment_wikipedia"
 #SBATCH -p gpu
+#SBATCH --gres=gpu:h100:1
 #SBATCH -A hpc-prf-wiki
 
 
