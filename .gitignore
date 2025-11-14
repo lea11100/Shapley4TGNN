@@ -13,3 +13,5 @@ __pycache__/
 test.ipynb
 *output.pdf
 launch.json
+.venv/*
+*.out
