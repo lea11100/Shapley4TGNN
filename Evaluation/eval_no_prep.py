@@ -206,7 +206,7 @@ if "tempme" in selected:
     from Explainers.External.TempME.Explainer import TempMEExplainer
     from Explainers.External.TempME.utils.graph import get_walk_finder
 
-    preprocessing = True
+    preprocessing = False
 
     if(preprocessing):
         explainer = TempMEExplainer(model, train_neighbor_sampler, train_data)
