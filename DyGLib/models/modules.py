@@ -363,7 +363,7 @@ class MultiHeadAttention(nn.Module):
         output = self.dropout(self.residual_fc(attention_output))
 
         # Tensor, shape (batch_size, 1, node_feat_dim + time_feat_dim)
-        if not CONFIG.model.omit_normalization:
+        if CONFIG.model.omit_normalization:
             output = output + residual
         else:
             output = self.layer_norm(output + residual)

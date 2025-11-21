@@ -22,24 +22,17 @@ for t in range(1, num_timesteps):
     for i in range(num_samples_per_timestep):
         prob = min(base_prob + t * prob_increase, 1.0)
         # connected = np.random.rand() < prob
-        connected = 1
         data.append({
             'time': t+2,
             'node1': src_id,
             'node2': tgt_id,
-            'connected': int(connected),
+            'connected': 1,
             'label': t+2
         })
-        connect_to_src = np.random.rand() < 0.5
+        #Randomly set timestamp of helper edge to be before or at the same time as src-tgt edge
+        ts = int((t + 1) * np.random.rand())
         data.append({
-            'time': t+1,
-            'node1': helper_id,
-            'node2': src_id,
-            'connected': 0, # if connect_to_src else 0,
-            'label': ''
-        })
-        data.append({
-            'time': t+1,
+            'time': ts,
             'node1': helper_id,
             'node2': tgt_id,
             'connected': 1, # if connect_to_src else 1,

@@ -189,9 +189,10 @@ def waterfall(
     # Prepare dataset with top-k, Others, and Sum
     df_top_k_per_edge = _prepare_dataset(explanation_flatten, k, base_date)
     if(remaining_shapley_values is not None and remaining_ids is not None):
+        # Add to last row as "Other events"
         df_top_k_per_edge.loc[-1] = [0,0,0, "", 0, "Other events", 0.0, np.sum(remaining_shapley_values), np.abs(np.sum(remaining_shapley_values)), True, True, "Other events"]  # adding a row
-        df_top_k_per_edge.index = df_top_k_per_edge.index + 1  # shifting index
-        df_top_k_per_edge.sort_index(inplace=True) 
+        # Update index
+        df_top_k_per_edge = df_top_k_per_edge.reset_index(drop=True) 
     num_edges = df_top_k_per_edge.Edge.drop_duplicates().shape[0]
     num_values = df_top_k_per_edge.shape[0]
 
@@ -202,6 +203,9 @@ def waterfall(
 
     # Calculate scaling for arrowhead width
     hl_scaled = head_length * df_top_k_per_edge.Shap_value.abs().max()
+    
+    y_positions = []
+    y = num_values
 
     # Plot bars and arrows
     for i, row in df_top_k_per_edge.sort_index(ascending=False).reset_index(drop=True).sort_index(ascending=False).iterrows():
@@ -209,9 +213,11 @@ def waterfall(
 
         if row.IsSum:
             # Sum row: total effect of edge
+            y = y - 1.1
+            y_positions.append(y)
             color = RED if row.Shap_value > 0 else BLUE
             ax.arrow(
-                start_sum, i, row.Shap_value, 0,
+                start_sum, y, row.Shap_value, 0,
                 length_includes_head=True,
                 color=color, width=bar_width,
                 head_width=bar_width,
@@ -219,7 +225,7 @@ def waterfall(
             )
             ax.text(
                 start_sum + 0.5 * row.Shap_value,
-                i,
+                y,
                 "{:.2f}".format(row.Shap_value),
                 ha="center", va="center",
                 color=FONTCOLOR_SUM
@@ -229,27 +235,61 @@ def waterfall(
                 start += row.Shap_value
         else:
             # Individual feature row
+            y = y - 0.6
+            y_positions.append(y)
             color = LIGHTRED if row.Shap_value > 0 else LIGHTBLUE
             ax.arrow(
-                start, i, row.Shap_value, 0,
+                start, y, row.Shap_value, 0,
                 length_includes_head=True,
-                alpha=0.5, color=color, width=bar_width,
-                head_width=bar_width,
+                alpha=0.5, color=color, width=bar_width * 0.7,
+                head_width=bar_width * 0.7,
                 head_length=min(hl_scaled, np.abs(row.Shap_value))
             )
             ax.text(
                 start + 0.5 * row.Shap_value,
-                i,
+                y,
                 "{:.2f}".format(row.Shap_value),
                 ha="center", va="center",
                 color=FONTCOLOR
             )
             start += row.Shap_value
 
+    # Add vertical line at baseline
+    ax.vlines(x=baseline, color=GREY, linestyle="--", linewidth=1, ymin=y_positions[0] - 0.5, ymax=y_positions[0] + 0.5)
+    # Add text for baseline
+    ax.text(
+        baseline,
+        y_positions[0] + 0.5,
+        "E[X]={:.2f}".format(baseline),
+        verticalalignment="bottom", horizontalalignment="center",
+        color=GREY
+    )
+    
+    # Add vertical line at final prediction
+    ax.vlines(x=start_sum, color=GREY, linestyle="--", linewidth=1, ymin=y_positions[-1] - 0.5, ymax=y_positions[-1] + 0.5)
+    # Add text for final prediction
+    ax.text(
+        start_sum,
+        y_positions[-1] - 0.5,
+        "f(x)={:.2f}".format(start_sum),
+        verticalalignment="top", horizontalalignment="center",
+        color=GREY
+    )
+    
+    #Remove borders
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    
+    #Add vertical grid lines
+    ax.yaxis.grid(True, linestyle='--', which='major', color='grey', alpha=0.1)
+    ax.set_axisbelow(True)
+
     # Title and y-axis labels
     ax.set_title(f"Prediction from Node {src} to Node {dst} @ {ts if base_date is None else base_date + timedelta(days=ts)} (Target: {target})")
-    ax.set_yticks(range(num_values))
+    ax.set_yticks(sorted(y_positions))
     ax.set_yticklabels(df_top_k_per_edge.Label_feat.iloc[::-1])
+    ax.set_ylim(y_positions[-1] - 1.5, y_positions[0] + 1.5)
 
     # Bold font for sum rows
     for label, isSum in zip(ax.get_yticklabels(), df_top_k_per_edge.IsSum.iloc[::-1]):
