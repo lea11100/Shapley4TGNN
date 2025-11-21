@@ -53,6 +53,8 @@ class SubgraphXTExplainer(Explainer):
             cpuct=5
         )
 
+    def initialize(self):
+        pass
 
     def explain_instance(self, src, dst, timestamp, silent = False):
         mask = (self.data.src_node_ids == src) & (self.data.dst_node_ids == dst) & (self.data.node_interact_times == timestamp)

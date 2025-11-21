@@ -33,6 +33,7 @@ from DyGLib.models.modules import TGNN
 import traceback
 import time
 from Config.config import CONFIG
+import os
 
 CONFIG = CONFIG()
 
@@ -90,7 +91,7 @@ class Explainer(ABC):
     def evaluate(
         self, src: np.ndarray, dst: np.ndarray, timestamp: np.ndarray,
         ground_truth: np.ndarray, event_features: np.ndarray,
-        label_for_prediction: Optional[str] = None
+        label_for_prediction: Optional[str] = None, store_coalitions: bool = False
     ) -> Tuple[pd.DataFrame, np.ndarray]:
         """
         Evaluate explanation fidelity and sparsity effects for multiple instances.
@@ -129,6 +130,10 @@ class Explainer(ABC):
                 timings.append(end - start)
 
                 coalitions, sg_src, sg_dst = self.build_coalitions(explanation)
+                if(store_coalitions):
+                    file_path = f"Logs/Coalitions/{CONFIG.data.dataset_name}/{self.__class__.__name__}/"
+                    os.makedirs(file_path, exist_ok=True)
+                    np.savez_compressed(f"{file_path}{src[i]}_to_{dst[i]}_{timestamp[i]}.npz", coalitions=coalitions)    
                 _, _, _, imputation_data = default_values_subgraph(
                     src[i], dst[i], timestamp[i], self.neighbor_finder, self.data,
                     mean_delta_timings, mean_values, sg_src=sg_src, sg_dst=sg_dst
