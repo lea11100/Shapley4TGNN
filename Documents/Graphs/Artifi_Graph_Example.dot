@@ -1,0 +1,72 @@
+digraph G {
+    // Layout options
+    layout=neato;
+    overlap=false;
+    splines=true;
+    
+    node[label="", shape=circle, 
+        colorscheme="Greys5", style=filled, 
+        fillcolor=2, penwidth=0,
+        fontsize=20]
+    edge[colorscheme="Greys5", color=2, fontsize=25]
+
+    // Main nodes
+    A [style=filled, fillcolor="#aad6e4", label="A", penwidth=1];
+    B [style=filled, fillcolor="#aad6e4", label="B", penwidth=1];
+    H [label="H", penwidth=1, fillcolor="#aad6e4"];
+
+    // Direct connection between main nodes
+    A -> B[style="dashed", color="black", label="t  "];
+    // Helper node
+    H -> B;
+    
+    A1; A2; A3;
+    A1 -> A ;
+    A2 -> A ;
+    A3 -> A ;
+    B1; B2; B3;
+    B1 -> B ;
+    B2 -> B ;
+    B3 -> B ;
+
+    // Second-level nodes (connected to A1, A2, A3)
+    A1a; A1b; A1c;
+    A2a; A2b; A2c;
+    A3a; A3b; A3c;
+
+    // Second-level edges pointing upward toward A
+    A1a -> A1 ;
+    A1b -> A1 ;
+    A1c -> A1 ;
+
+    A2a -> A2 ;
+    A2b -> A2 ;
+    A2c -> A2 ;
+
+    A3a -> A3 ;
+    A3b -> A3 ;
+    A3c -> A3 ;
+    
+    // Second-level B-side
+    B1a; B1b; B1c;
+    B2a; B2b; B2c;
+    B3a; B3b; B3c;
+
+    B1a -> B1 ;
+    B1b -> B1 ;
+    B1c -> B1 ;
+
+    B2a -> B2 ;
+    B2b -> B2 ;
+    B2c -> B2 ;
+
+    B3a -> B3 ;
+    B3b -> B3 ;
+    B3c -> B3 ;
+    
+    node[style=invis];
+    H1 -> H[style=invis];
+    H2 -> H[style=invis];
+    H3 -> H[style=invis];
+
+}

@@ -1,0 +1,37 @@
+graph G {
+    // Layout options
+    layout=neato;
+    overlap=false;
+    splines=true;
+    
+    node[label="", shape=circle, fontsize=20]
+    edge[fontsize=30]
+
+    // Main nodes
+    A [shape=circle, style=filled, fillcolor=lightblue, label="A"];
+    B [shape=circle, style=filled, fillcolor=lightblue, label="B"];
+
+    // Direct connection between main nodes
+    A -- B[style="dashed"];
+
+    // One-hop neighbors
+    A1; A2; B1; B2;
+    A -- A1 [penwidth="5", color="1"];
+    A -- A2 [color="5"];
+    B -- B1 [penwidth="5", color="5"];
+    B -- B2 [color="5"];
+
+    // Two-hop neighbors (connected to one-hop nodes)
+    A1a; A1b; A2a; A2b;
+    B1a; B1b; B2a; B2b;
+
+    A1 -- A1a [penwidth="5", color="5"]
+    A1 -- A1b [color="5"];
+    A2 -- A2a [color="5"];
+    A2 -- A2b [color="5"];
+
+    B1 -- B1a [color="1"];
+    B1 -- B1b [penwidth="5", color="1"];
+    B2 -- B2a [color="1"];
+    B2 -- B2b [color="1"];
+}
