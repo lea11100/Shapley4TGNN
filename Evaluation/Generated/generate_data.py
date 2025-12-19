@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import os
 
 np.random.seed(2025)
 
@@ -88,6 +89,7 @@ node_names[200000:300000] = 'H'
 
 
 #Save data
+os.makedirs("Data/Generated", exist_ok=True)
 df.to_csv("Data/Generated/generated.csv")
 np.save("Data/Generated/generated.npy", edge_features)
 np.save("Data/Generated/generated_node.npy", node_features)

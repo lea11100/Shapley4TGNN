@@ -25,19 +25,15 @@ The main contribution of the thesis can be found in [/Explainers/Shapley4TGNN](/
 
 # Evaluation
 
-This section describes how to execute the explainer. Further, it utilizes the MOOC dataset as an example.
+This section describes examplatory how to execute the explainer using the artificial dataset. Futher this description includes how to generate the data.
 
-Each dataset has its own folder in [/Evaluation](/Evaluation). Each folder contains at least:
+## 1. Add the dataset
 
-- "training.py": Contains the logic for training the TGNN.
-- "Statistics.ipynb": Delivers statistics about the dataset 
-- "Quantitative Evaluation.ipynb": Evaluates the explainers
+To generate the artificial dataset execute 
 
-Some folders also contain a "Qualitative Evaluation.ipynb" which creates example explanations for the dataset. Further, some folders contain additional folders that evaluate other configurations on the dataset. 
+```python -m Evaluation.Generated.generate_data```
 
-## 1. Add a dataset
-
-The repository does not contain the data for the effect evaluation, and the data is not publicly available. 
+This command creates the dataset including a network structure file **Generated.csv**, event features **Generated.npy**, and node features **Generated_node.npy**. All files are stored in [/Data/Generated](/Data/Generated).
 
 All other datasets are available [here](https://zenodo.org/records/7213796#.Y1cO6y8r30o). The data files need to be placed within a folder in [/Data](/Data). The available datasets mainly consist of four files: 
 
@@ -55,77 +51,76 @@ Download the `mooc.zip` from [here](https://zenodo.org/records/7213796#.Y1cO6y8r
 
 ## 2. Add a configuration
 
-The configurations are located in [/Config](/Config) in the form of `.yaml` files. To add a new configuration, duplicate an existing one and adjust it to your needs. The parameter descriptions can be found in [/Config/config.py](/Config/config.py). 
+The configurations are located in [/Config](/Config) in the form of `.yaml` files. The parameter descriptions can be found in [/Config/config.py](/Config/config.py). 
 
-To make use of a configuration, execute 
-
-```
-from Config.config import CONFIG
-CONFIG = CONFIG("FileNameWithout'.yaml'")
-```
-
-After that, you can use the configuration parameter, e.g., `CONFIG.data.folder` stores the location of the dataset. 
-
-### MOOC example
-
-The configuration for MOOC already exists in [/Config/MOOC.yaml](Config/MOOC.yaml). Each file that executes
+To make use of the configuration for the artificial dataset, execute 
 
 ```
 from Config.config import CONFIG
-CONFIG = CONFIG("MOOC")
+CONFIG = CONFIG("Generated")
 ```
 
-in the beginning, makes use of the MOOC configuration. 
+After that, you can use the configuration parameters that are stored in [Generated.yaml](/Config/Generated.yaml). E.g., `CONFIG.data.folder` stores the location of the dataset. 
 
 ## 3. Run training
 
-The training is located in the training.py of the evaluation folder. It can be executed using 
+The trainig routines are located [Evaluation/Training](Evaluation/Training). For regression tasks e.g. on the artificial dataset use  
 
 ```
-python -m Evaluation.*.training
+python -m Evaluation.Training.regression -d "Generated"
 ```
 
-If another configuration is used that is located in the evaluation folder, use 
+For prediction tasks use 
 
 ```
-python -m Evaluation.*.**.training
+python -m Evaluation.Training.prediction -d "MOOC"
 ```
+
+The flag ``-d`` specifies the configuration used.
 
 The resulting model is then located in [/Saved_models](/Saved_models). Each model gets its own folder specified by `CONFIG.data.dataset_name` followed by the name of the TGNN used, e.g., "TGAT" or "TGN". The folder also contains performance metrics in the form of ".json" files. 
 
-### MOOC Example
-
-Execute: 
-
-```
-python -m Evaluation.MOOC.training
-```
-
-The resulting model is then located in [/Saved_models/MOOC/TGAT/TGAT_seed0.pkl](/Saved_models/MOOC/TGAT/TGAT_seed0.pkl) and the performance metrics are in [/Saved_models/MOOC/TGAT/TGAT_seed0.json](/Saved_models/MOOC/TGAT/TGAT_seed0.json). 
-
-For training the TGN on the MOOC dataset run:
-
-```
-python -m Evaluation.MOOC.MOOCTGN.training
-```
-
-The resulting model is then located in [/Saved_models/MOOCTGN/TGN/TGN_seed0.pkl](/Saved_models/MOOCTGN/TGN/TGN_seed0.pkl) and the performance metrics are in [/Saved_models/MOOCTGN/TGN/TGN_seed0.json](/Saved_models/MOOCTGN/TGN/TGN_seed0.json). 
-
 ## 4. Run Quantitative Evaluation
 
-The evaluation is located in the "Quantitative Evaluation.py" of the evaluation folder. The evaluation is predefined to execute the preprocessing of TempME, including motif extraction and training. This is done by setting `preprocessing = True`. It can be turned of if the preprocessing was executed before. Further, the number of sample explanations can be set with `num_samples`. The plots are saved in [/Documents/Images/*](/Documents/Images/*). Please make sure that the corresponding folder exists. 
+To evaluate the explainer performances for the artificial dataset use
 
-### MOOC Example
+```python -m Evaluation.run_exec --dataset "Generated" --explainer all```
 
-Create a folder called "MOOC" in [Documents/Images](Documents/Images) if it does not exist. Navigate into [/Evaluation/MOOC/Quantitative Evaluation.ipynb](/Evaluation/MOOC/Quantitative%20Evaluation.ipynb). Execute all cells in order. After that, the results are stored in [Documents/Images/MOOC](Documents/Images/MOOC). The AUCs are directly stored in the notebook. 
+This command evaluates the the baseline explainers and the novel Shapley explainers. The results are stored in [Documents/ExplainerOutputs/](Documents/ExplainerOutputs/) where each explainer receives its own CSV file. 
+
+The evaluation supports the following parameters:
+
+### Required Arguments
+
+- `-d, --dataset DATASET` -
+  Name of the dataset/configuration to use.  
+
+- `--explainer EXPLAINER` -
+  Name of the explainer method to use. Supported values: "shapley_event", "shapley_feature", "tgnn", "tempme", "all"
+
+### Optional Arguments
+
+- `--preprocessing` (default: `True`) -
+  Whether to apply preprocessing (motif extraction and training) for TempME before evaluation.  
+  Set to `False` to disable preprocessing.
+
+- `--num_samples NUM_SAMPLES` (default: `200`) - 
+  Number of samples to use during evaluation.
+
+- `--store_coalitions` (default: `False`) -
+  Whether to store coalitions generated during evaluation.
+
+## 5. Visualize results
+
+To visualize the results one can use [Evaluation/visualize.ipynb](Evaluation/visualize.ipynb). There, the exemplaratory implementation for the Reddit dataset is given. To use another dataset, change the configuration used (first cell) and load other CSVs (second cell).
+
+The plots are stored in [Documents/Images/Reddit](Documents/Images/Reddit). The innermost folder depends on the selected configuration and changes if the used configuration is changed.
 
 ## (Optional) 5. Run Qualitative Evaluation
 
-The evaluation is located in the "Qualitative Evaluation.py" of the evaluation folder. It creates two samples using the Shapley explainer and stores them in [/Documents/Images/*](/Documents/Images/*).
+[Evaluation/Generated/Qualitative Evaluation.ipynb](Evaluation/Generated/Qualitative%20Evaluation.ipynb) presents an exemplatory usage of the hierachical waterfall diagramm to visualize explanations for the artificial dataset. 
 
-### MOOC Example
-
-Create a folder called "MOOC" in [Documents/Images](Documents/Images) if it does not exist. Navigate into [/Evaluation/MOOC/Qualitative Evaluation.ipynb](/Evaluation/MOOC/Qualitative%20Evaluation.ipynb). Execute all cells in order. After that, the results are stored in [Documents/Images/MOOC](Documents/Images/MOOC).
+The plot are then stored in [Documents/Images/Generated](Documents/Images/Generated).
 
 
 
