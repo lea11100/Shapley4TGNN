@@ -5,7 +5,7 @@ graph G {
     splines=true;
     
     node[label="", shape=circle, fontsize=20]
-    edge[fontsize=30]
+    edge[fontsize=30, len=0.15]
 
     // Main nodes
     A [shape=circle, style=filled, fillcolor=lightblue, label="A"];
