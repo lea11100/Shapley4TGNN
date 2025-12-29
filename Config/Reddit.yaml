@@ -24,10 +24,10 @@ ModelConfig:
 
 DataConfig:
   dataset_name: Reddit
-  folder: Data/Reddit
-  edge_feat_file: /Reddit.npy
-  node_feat_file: /Reddit_node.npy
-  index_file: /Reddit.csv
+  folder: Data/reddit
+  edge_feat_file: /ml_reddit.npy
+  node_feat_file: /ml_reddit_node.npy
+  index_file: /ml_reddit.csv
   feature_names_file: ""
   node_names_file: ""
   is_directed: False

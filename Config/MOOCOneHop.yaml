@@ -19,15 +19,15 @@ ModelConfig:
   max_input_sequence_length: 32
   dropout: 0.1
   task: classification
-  trained_model_path: Saved_models\\MOOCOneHop\\TGAT\\TGAT_seed0.pkl
+  trained_model_path: Saved_models/MOOCOneHop/TGAT/TGAT_seed0.pkl
   omit_normalization: False
 
 DataConfig:
   dataset_name: MOOCOneHop
-  folder: Data\\MOOC
-  edge_feat_file: \\mooc.npy
-  node_feat_file: \\mooc_node.npy
-  index_file: \\mooc.csv
+  folder: Data/mooc
+  edge_feat_file: /ml_mooc.npy
+  node_feat_file: /ml_mooc_node.npy
+  index_file: /ml_mooc.csv
   feature_names_file: ""
   node_names_file: ""
   is_directed: False

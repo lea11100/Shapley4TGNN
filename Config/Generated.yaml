@@ -24,10 +24,10 @@ ModelConfig:
 
 DataConfig:
   dataset_name: Generated
-  folder: Data/Generated
-  edge_feat_file: /generated.npy
-  node_feat_file: /generated_node.npy
-  index_file: /generated.csv
+  folder: Data/generated
+  edge_feat_file: /ml_generated.npy
+  node_feat_file: /ml_generated_node.npy
+  index_file: /ml_generated.csv
   feature_names_file: ""
   node_names_file: /generated_node_names.npy
   is_directed: False

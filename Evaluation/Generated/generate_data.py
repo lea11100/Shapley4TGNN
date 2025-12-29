@@ -89,10 +89,9 @@ node_names[200000:300000] = 'H'
 
 
 #Save data
-os.makedirs("Data/Generated", exist_ok=True)
-df.to_csv("Data/Generated/generated.csv")
-np.save("Data/Generated/generated.npy", edge_features)
-np.save("Data/Generated/generated_node.npy", node_features)
-np.save("Data/Generated/generated_node_names.npy", node_names)
-
-print(df[df.label == "1"].head())
+os.makedirs("Data/generated", exist_ok=True)
+df.to_csv("Data/generated/ml_generated.csv")
+np.save("Data/generated/ml_generated.npy", edge_features)
+np.save("Data/generated/ml_generated_node.npy", node_features)
+np.save("Data/generated/generated_node_names.npy", node_names)
+print(f"Generated data saved to Data/generated/ml_generated.csv and corresponding features. {len(df)} edges created.")

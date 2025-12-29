@@ -19,15 +19,15 @@ ModelConfig:
   max_input_sequence_length: 32
   dropout: 0.1
   task: classification
-  trained_model_path: Saved_models\\WikipediaOneHop\\TGAT\\TGAT_seed0.pkl
+  trained_model_path: Saved_models/WikipediaOneHop/TGAT/TGAT_seed0.pkl
   omit_normalization: False
 
 DataConfig:
   dataset_name: WikipediaOneHop
-  folder: Data\\Wikipedia
-  edge_feat_file: \\Wikipedia.npy
-  node_feat_file: \\Wikipedia_node.npy
-  index_file: \\Wikipedia.csv
+  folder: Data/wikipedia
+  edge_feat_file: /ml_wikipedia.npy
+  node_feat_file: /ml_wikipedia_node.npy
+  index_file: /ml_wikipedia.csv
   feature_names_file: ""
   node_names_file: ""
   is_directed: False

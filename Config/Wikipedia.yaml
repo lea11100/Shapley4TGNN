@@ -24,10 +24,10 @@ ModelConfig:
 
 DataConfig:
   dataset_name: Wikipedia
-  folder: Data/Wikipedia
-  edge_feat_file: /Wikipedia.npy
-  node_feat_file: /Wikipedia_node.npy
-  index_file: /Wikipedia.csv
+  folder: Data/wikipedia
+  edge_feat_file: /ml_wikipedia.npy
+  node_feat_file: /ml_wikipedia_node.npy
+  index_file: /ml_wikipedia.csv
   feature_names_file: ""
   node_names_file: ""
   is_directed: False

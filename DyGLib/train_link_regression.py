@@ -21,7 +21,7 @@ from DyGLib.utils.utils import set_random_seed, convert_to_gpu, get_parameter_si
 from DyGLib.utils.utils import get_neighbor_sampler, compute_stats, NeighborSampler
 from DyGLib.evaluate_models_utils import evaluate_model_link_regression
 from DyGLib.utils.metrics import get_link_regression_metrics
-from DyGLib.utils.DataLoader import get_idx_data_loader, get_effect_eval_data, Data
+from DyGLib.utils.DataLoader import get_idx_data_loader, Data
 from DyGLib.utils.EarlyStopping import EarlyStopping
 
 from Config.config import ModelConfig, DataConfig, TrainConfig

@@ -24,10 +24,10 @@ ModelConfig:
 
 DataConfig:
   dataset_name: MOOC
-  folder: Data/MOOC
-  edge_feat_file: /mooc.npy
-  node_feat_file: /mooc_node.npy
-  index_file: /mooc.csv
+  folder: Data/mooc
+  edge_feat_file: /ml_mooc.npy
+  node_feat_file: /ml_mooc_node.npy
+  index_file: /ml_mooc.csv
   feature_names_file: ""
   node_names_file: ""
   is_directed: False
