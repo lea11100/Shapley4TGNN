@@ -1,10 +1,10 @@
 # Explaining Temporal Graph Predictions with Shapley Values
 
-This is the repository for reproducing the findings in the Master thesis "Explaining Temporal Graph Predictions with Shapley Values". 
+This is the repository for reproducing the findings in the paper "Explaining Temporal Graph Predictions with Shapley Values". 
 
 # Prerequisites
 
-The implementation is based on Python 3.9.13 and CUDA 12.4. The external packages required to run the evaluation can be found in the [requirements.txt](/requirements.txt). To install the requirements, execute `pip install -r /requirements.txt`. 
+The implementation is based on Python 3.9.13 and CUDA 12.4. The external packages required to run the evaluation can be found in the [requirements.txt](/requirements.txt). To install the requirements, execute `pip install -r requirements.txt`. 
 
 Additionally, execute 
 ```
@@ -25,7 +25,7 @@ The main contribution of the thesis can be found in [/Explainers/Shapley4TGNN](/
 
 # Evaluation
 
-This section describes examplatory how to execute the explainer using the artificial dataset. Futher this description includes how to generate the data.
+This section describes examplatory how to execute the explainer using the artificial dataset. Futher, this description includes how to generate the data.
 
 ## 1. Add the dataset
 
@@ -33,25 +33,28 @@ To generate the artificial dataset execute
 
 ```python -m Evaluation.Generated.generate_data```
 
-This command creates the dataset including a network structure file **Generated.csv**, event features **Generated.npy**, and node features **Generated_node.npy**. All files are stored in [/Data/Generated](/Data/Generated).
+This command creates the dataset including a network structure file **ml_generated.csv**, event features **ml_generated.npy**, and node features **ml_generated_node.npy**. All files are stored in [/Data/generated](/Data/generated).
 
 All other datasets are available [here](https://zenodo.org/records/7213796#.Y1cO6y8r30o). The data files need to be placed within a folder in [/Data](/Data). The available datasets mainly consist of four files: 
 
-- `*.csv`: Original network, which is not needed for reproducing the findings. It needs to be deleted if you use a predefined configuration. 
-- `ml_*.csv`: Network structure. If you use a predefined configuration, rename this file into `*.csv`. 
--  `ml_*.npy`: Event features. If you use a predefined configuration, rename this file into `*.npy`. 
-- `ml_*_node.npy`: Node features, which are zero for the available datasets. If you use a predefined configuration, rename this file to `*_node.npy`.
+- `*.csv`: Original network, which is not needed for reproducing the findings. 
+- `ml_*.csv`: Network structure. 
+-  `ml_*.npy`: Event features. 
+- `ml_*_node.npy`: Node features, which are zero for the available datasets. 
 
 ### MOOC Example
 
-Download the `mooc.zip` from [here](https://zenodo.org/records/7213796#.Y1cO6y8r30o). Unzip the files into [/Data/MOOC](/Data/MOOC), delete [/Data/MOOC/mooc.csv](/Data/MOOC/mooc.csv), and rename the files according to the description above. To this end, the repository needs to contain the following files:
-- [/Data/MOOC/mooc.csv](/Data/MOOC/mooc.csv)
-- [/Data/MOOC/mooc.npy](/Data/MOOC/mooc.npy)
-- [/Data/MOOC/mooc_node.npy](/Data/MOOC/mooc_node.npy)
+Download the `mooc.zip` from [here](https://zenodo.org/records/7213796#.Y1cO6y8r30o). Unzip the files into [/Data/mooc](/Data/mooc). To this end, the repository needs to contain the following files:
+- [/Data/mooc/mooc.csv](/Data/mooc/mooc.csv)
+- [/Data/mooc/ml_mooc.csv](/Data/mooc/ml_mooc.csv)
+- [/Data/mooc/ml_mooc.npy](/Data/mooc/ml_mooc.npy)
+- [/Data/mooc/ml_mooc_node.npy](/Data/mooc/ml_mooc_node.npy)
 
 ## 2. Add a configuration
 
-The configurations are located in [/Config](/Config) in the form of `.yaml` files. The parameter descriptions can be found in [/Config/config.py](/Config/config.py). 
+The configurations are located in [/Config](/Config) in the form of `.yaml` files. In case of reproduction, there are not futher actions to do in this step. 
+
+The parameter descriptions of all configurations can be found in [/Config/config.py](/Config/config.py). 
 
 To make use of the configuration for the artificial dataset, execute 
 
@@ -60,11 +63,11 @@ from Config.config import CONFIG
 CONFIG = CONFIG("Generated")
 ```
 
-After that, you can use the configuration parameters that are stored in [Generated.yaml](/Config/Generated.yaml). E.g., `CONFIG.data.folder` stores the location of the dataset. 
+This loads the configuration with the name `Generated.yaml`. After that, you can use the configuration parameters that are stored in [Generated.yaml](/Config/Generated.yaml). E.g., `CONFIG.data.folder` stores the location of the dataset. 
 
 ## 3. Run training
 
-The trainig routines are located [Evaluation/Training](Evaluation/Training). For regression tasks e.g. on the artificial dataset use  
+The training routines are located [Evaluation/Training](Evaluation/Training). For regression tasks e.g. on the artificial dataset use  
 
 ```
 python -m Evaluation.Training.regression -d "Generated"
