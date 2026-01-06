@@ -36,7 +36,6 @@ import seaborn as sns
 
 import random
 
-import graphviz
 from IPython.display import SVG
 import time
 
