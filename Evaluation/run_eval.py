@@ -189,6 +189,8 @@ def evaluate_explainer(explainer, explainer_name):
 if "shapley_event" in selected:
     from Explainers.Shapley4TGNN.Explainer import ShapleyExplainerEvents
     
+    print("Evaluating Shapley4TGNNEvent...")
+    
     explainer = ShapleyExplainerEvents(model, full_neighbor_sampler, full_data, edge_raw_features)
     results, timings = evaluate_explainer(explainer, "Shapley4TGNNEvent")
     
@@ -198,10 +200,13 @@ if "shapley_event" in selected:
     
     explainer = None
     torch.cuda.empty_cache()
+    print("Done.")
         
 # ## Shapley values - Feature level
 if "shapley_feature" in selected:
     from Explainers.Shapley4TGNN.Explainer import ShapleyExplainerFeatures
+
+    print("Evaluating Shapley4TGNNFeature...")
 
     explainer = ShapleyExplainerFeatures(model, full_neighbor_sampler, full_data, edge_raw_features, None, shapley_alg="MonteCarlo", top_k=3) 
     results, timings = evaluate_explainer(explainer, "Shapley4TGNNFeature")
@@ -212,10 +217,13 @@ if "shapley_feature" in selected:
     
     explainer = None
     torch.cuda.empty_cache()
+    print("Done.")
 
 # ## TGNN Explainer
 if "tgnn" in selected:
     from Explainers.External.tgnnexplainer.Explainer import SubgraphXTExplainer
+    
+    print("Evaluating TGNNExplainer...")
     
     explainer = SubgraphXTExplainer(model, full_neighbor_sampler, full_data) 
     results, timings = evaluate_explainer(explainer, "TGNNExplainer")
@@ -226,6 +234,7 @@ if "tgnn" in selected:
     
     explainer = None
     torch.cuda.empty_cache()
+    print("Done.")
     
     
 
@@ -233,10 +242,13 @@ if "tgnn" in selected:
 if "tempme" in selected:
     from Explainers.External.TempME.Explainer import TempMEExplainer
     from Explainers.External.TempME.utils.graph import get_walk_finder
+    
+    print("Evaluating TempME...")
 
     preprocessing = args.preprocessing
 
     if(preprocessing):
+        print("Preprocessing TempME...")
         explainer = TempMEExplainer(model, train_neighbor_sampler, train_data)
         walk_finder = get_walk_finder(train_data)
         neg_edge_sampler = NegativeEdgeSampler(train_data.src_node_ids, train_data.dst_node_ids, train_data.node_interact_times)
@@ -247,6 +259,7 @@ if "tempme" in selected:
         walk_finder = get_walk_finder(full_data)
         neg_edge_sampler = NegativeEdgeSampler(full_data.src_node_ids, full_data.dst_node_ids, full_data.node_interact_times)
         explainer.preprocess(walk_finder, neg_edge_sampler, train=False)
+        print("Preprocessing done.")
 
     explainer = TempMEExplainer(model, full_neighbor_sampler, full_data)
     results, timings = evaluate_explainer(explainer, "TempME")
@@ -257,3 +270,4 @@ if "tempme" in selected:
     
     explainer = None
     torch.cuda.empty_cache()
+    print("Done.")

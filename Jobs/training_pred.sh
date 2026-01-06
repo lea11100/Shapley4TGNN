@@ -12,10 +12,10 @@
 #SBATCH -A hpc-prf-wiki
 #SBATCH --array=0-2
 
-
 module load lang/Python/3.9.5-GCCcore-10.3.0
+module load lib/libffi/3.4.5-GCCcore-13.3.0
 module load system/CUDA/12.4.1
-source .venv/bin/activate
+source venv/bin/activate
 
 options=( "MOOC" "Reddit" "Wikipedia" )
 
