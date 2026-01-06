@@ -59,8 +59,8 @@ df = df.sort_values(by=['ts']).reset_index(drop=True)
 df = df.reset_index(names='idx')   
 df["idx"] = df["idx"] + 1 
 
-edge_features = np.ones((len(df) + 1, 1))  # features for each edge
-node_features = np.ones((rand_id+2, 3))  # 3 zero features for each node
+edge_features = np.zeros((len(df) + 1, 1))  # features for each edge
+node_features = np.zeros((rand_id+2, 3))  # 3 zero features for each node
 
 # Add node names 
 node_names = np.full((rand_id+2,), 'rnd', dtype=object)
