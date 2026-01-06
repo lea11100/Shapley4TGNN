@@ -87,7 +87,7 @@ The resulting model is then located in [/Saved_models](/Saved_models). Each mode
 
 To evaluate the explainer performances for the artificial dataset use
 
-```python -m Evaluation.run_exec --dataset "Generated" --explainer all```
+```python -m Evaluation.run_eval --dataset "Generated" --explainer all```
 
 This command evaluates the the baseline explainers and the novel Shapley explainers. The results are stored in [Documents/ExplainerOutputs/](Documents/ExplainerOutputs/) where each explainer receives its own CSV file. 
 
@@ -115,15 +115,9 @@ The evaluation supports the following parameters:
 
 ## 5. Visualize results
 
-To visualize the results one can use [Evaluation/visualize.ipynb](Evaluation/visualize.ipynb). There, the exemplaratory implementation for the Reddit dataset is given. To use another dataset, change the configuration used (first cell) and load other CSVs (second cell).
+To visualize the results one can use [Evaluation/visualize.ipynb](Evaluation/visualize.ipynb). There, the exemplaratory implementation for the Reddit dataset is given. To use another dataset, change the configuration used (first cell). If the notebook has been executed before, restart it to clear the cached configuration.
 
 The plots are stored in [Documents/Images/Reddit](Documents/Images/Reddit). The innermost folder depends on the selected configuration and changes if the used configuration is changed.
-
-## (Optional) 5. Run Qualitative Evaluation
-
-[Evaluation/Generated/Qualitative Evaluation.ipynb](Evaluation/Generated/Qualitative%20Evaluation.ipynb) presents an exemplatory usage of the hierachical waterfall diagramm to visualize explanations for the artificial dataset. 
-
-The plot are then stored in [Documents/Images/Generated](Documents/Images/Generated).
 
 
 

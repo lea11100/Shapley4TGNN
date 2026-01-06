@@ -98,7 +98,11 @@ model.eval()
 num_samples = args.num_samples
 
 def get_edge_by_id(link_index):
-    src, dst, time_stamp, edge_id, true_value = full_data.src_node_ids[link_index], full_data.dst_node_ids[link_index], full_data.node_interact_times[link_index], full_data.edge_ids[link_index], 1 # type: ignore
+    src, dst, time_stamp, edge_id = full_data.src_node_ids[link_index], full_data.dst_node_ids[link_index], full_data.node_interact_times[link_index], full_data.edge_ids[link_index]
+    if CONFIG.model.task == "regression":
+        true_value = full_data.labels[link_index]
+    else: # link prediction case
+        true_value = 1
     return src, dst, time_stamp, edge_id, true_value
 
 random.seed(2025)

@@ -26,7 +26,6 @@ import scipy.special as sc
 import pandas as pd
 from tqdm import tqdm
 from DyGLib.utils.DataLoader import Data
-from sklearn.metrics import auc
 import torch
 from DyGLib.utils.utils import BatchSubgraphs, NeighborSampler
 from DyGLib.models.modules import TGNN
@@ -586,24 +585,3 @@ def calc_mean_timing(timestamp: int, subgraph: BatchSubgraphs, imputation_data: 
         for id, new_ts in np.concat((e_ids.reshape((-1, 1)), new_timestamps.reshape((-1, 1))), axis=1):
             if id != 0:
                 imputation_data[id][1] = new_ts
-
-
-def calc_auc(dataframes: List[pd.DataFrame], metric: str, remove_technique: str, no_adjust: bool = False) -> List[float]:
-    """
-    Compute the Area Under the Curve (AUC) for a given metric vs sparsity thresholds.
-
-    Useful for summarizing fidelity-sparsity curves across different explanation methods.
-
-    Returns
-    -------
-    list of float
-        AUC values for each DataFrame in `dataframes`.
-    """
-    aucs = []
-    minimum = min([d[metric].min() for d in dataframes])
-    for d in dataframes:
-        sparsites = d.loc[d["Remove technique"] == remove_technique, "Sparsity thresholds"]
-        values = d.loc[d["Remove technique"] == remove_technique, metric] - minimum if not no_adjust else d.loc[d["Remove technique"] == remove_technique, metric]
-        a = auc(sparsites, values)
-        aucs.append(a)
-    return aucs
