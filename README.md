@@ -1,6 +1,6 @@
-# Explaining Temporal Graph Predictions with Shapley Values
+# TGNNSHAP
 
-This is the repository for reproducing the findings in the paper "Explaining Temporal Graph Predictions with Shapley Values". 
+This is the repository for reproducing the findings in the paper "TGNNSHAP: A Hierarchical Explainer for Temporal Graph Predictions using Shapley and Owen Values". 
 
 # Prerequisites
 
