@@ -14,4 +14,4 @@ test.ipynb
 launch.json
 .venv/*
 venv/*
-.*.out
+*.out

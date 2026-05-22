@@ -84,6 +84,9 @@ def get_link_prediction_data(val_ratio: float, test_ratio: float, node_dim: int)
     node_raw_features = np.load(CONFIG.data.folder + CONFIG.data.node_feat_file)
     node_raw_features = np.zeros((node_raw_features.shape[0], node_dim))
     node_raw_features = node_raw_features.astype("float32")
+    
+    if len(edge_raw_features.shape) == 1:
+        edge_raw_features = edge_raw_features.reshape(-1, 1)
 
     if edge_raw_features.shape[1] < 172:
         edge_zero_padding = np.zeros((edge_raw_features.shape[0], 172 - edge_raw_features.shape[1]))
