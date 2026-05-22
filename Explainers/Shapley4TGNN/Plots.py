@@ -70,10 +70,10 @@ def _prepare_dataset(explanation_flatten: list, k: int, base_date:Optional[date]
     df["Shap_value_abs"] = df["Shap_value"].abs()
 
     # Sum Shapley values by edge to compute total contribution
-    df_sum = df.groupby("Edge", observed=False).sum()
-    df_sum[["Timing", "Feat_name", "Feat_value"]] = [0, "Sum", 0]
+    df_sum = df.groupby("Edge", observed=False)[["Shap_value_abs", "Shap_value"]].sum()
+    df_sum[["Feat_name", "Feat_value"]] = ["Sum", 0]
     df_sum = df_sum.reset_index(names=["Edge"])
-    df_sum = df_sum.drop(columns=["Edge_type", "Timing", "Src", "Dst"])
+    #df_sum = df_sum.drop(columns=["Timing"])
     df_sum = df_sum.merge(df[["Edge", "Edge_type", "Timing", "Src", "Dst"]].drop_duplicates(),
                           on="Edge", how="left")
 
@@ -91,6 +91,7 @@ def _prepare_dataset(explanation_flatten: list, k: int, base_date:Optional[date]
     others = others.groupby("Edge", observed=False).sum()
     others[["Timing", "Feat_name", "Feat_value"]] = [0, "Others", 0]
     others = others.reset_index(names="Edge")
+    others = others[others["Shap_value_abs"] != 0]
     others = others.drop(columns=["Edge_type", "Timing"])
     others = others.merge(df[["Edge", "Edge_type", "Timing"]].drop_duplicates(),
                           on="Edge", how="left")
@@ -116,7 +117,7 @@ def _prepare_dataset(explanation_flatten: list, k: int, base_date:Optional[date]
     # Special labels for 'Sum' and 'Others'
     df_top_k_per_edge.loc[df_top_k_per_edge.IsSum, "Label_feat"] = \
         df_top_k_per_edge[df_top_k_per_edge.IsSum].apply(
-            lambda x: f"{x.Src} to {x.Dst} @ {int(x.Timing) if base_date is None else base_date + timedelta(days=x.Timing)}", axis=1
+            lambda x: f"{x.Src} → {x.Dst} (t={x.Timing if base_date is None else base_date + timedelta(days=x.Timing)})", axis=1
         )
     df_top_k_per_edge.loc[df_top_k_per_edge.IsOthers, "Label_feat"] = "Others"
 
@@ -136,7 +137,8 @@ def waterfall(
     bar_width = 0.5,
     head_length = 0.01,
     base_date:Optional[date] = None,
-    space_per_bar = 0.5
+    space_per_bar = 0.5,
+    inverse_colors = False
 ):
     """
     Create a horizontal waterfall plot from feature-level Shapley explanations.
@@ -215,7 +217,11 @@ def waterfall(
             # Sum row: total effect of edge
             y = y - 1.1
             y_positions.append(y)
-            color = RED if row.Shap_value > 0 else BLUE
+            if not inverse_colors:
+                color = RED if row.Shap_value > 0 else BLUE
+            else:
+                color = BLUE if row.Shap_value > 0 else RED
+            
             ax.arrow(
                 start_sum, y, row.Shap_value, 0,
                 length_includes_head=True,
@@ -237,7 +243,10 @@ def waterfall(
             # Individual feature row
             y = y - 0.6
             y_positions.append(y)
-            color = LIGHTRED if row.Shap_value > 0 else LIGHTBLUE
+            if not inverse_colors:
+                color = LIGHTRED if row.Shap_value > 0 else LIGHTBLUE
+            else:
+                color = LIGHTBLUE if row.Shap_value > 0 else LIGHTRED
             ax.arrow(
                 start, y, row.Shap_value, 0,
                 length_includes_head=True,
@@ -286,7 +295,7 @@ def waterfall(
     ax.set_axisbelow(True)
 
     # Title and y-axis labels
-    ax.set_title(f"Prediction from Node {src} to Node {dst} @ {ts if base_date is None else base_date + timedelta(days=ts)} (Target: {target})")
+    ax.set_title(f"Prediction from Node {src} to Node {dst} at time {ts if base_date is None else base_date + timedelta(days=ts)}")
     ax.set_yticks(sorted(y_positions))
     ax.set_yticklabels(df_top_k_per_edge.Label_feat.iloc[::-1])
     ax.set_ylim(y_positions[-1] - 1.5, y_positions[0] + 1.5)

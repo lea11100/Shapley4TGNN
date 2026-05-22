@@ -1,0 +1,160 @@
+[1mdiff --git a/Documents/Images/Generated/Waterfall_edge-2.pdf b/Documents/Images/Generated/Waterfall_edge-2.pdf[m
+[1mindex 9ee6994..80b34f0 100644[m
+Binary files a/Documents/Images/Generated/Waterfall_edge-2.pdf and b/Documents/Images/Generated/Waterfall_edge-2.pdf differ
+[1mdiff --git a/Documents/Images/Generated/Waterfall_feat-2.pdf b/Documents/Images/Generated/Waterfall_feat-2.pdf[m
+[1mindex 249a4d9..18b9b71 100644[m
+Binary files a/Documents/Images/Generated/Waterfall_feat-2.pdf and b/Documents/Images/Generated/Waterfall_feat-2.pdf differ
+[1mdiff --git a/Documents/Images/MOOC/Waterfall_edge-1.pdf b/Documents/Images/MOOC/Waterfall_edge-1.pdf[m
+[1mindex e88c4c4..d13a307 100644[m
+Binary files a/Documents/Images/MOOC/Waterfall_edge-1.pdf and b/Documents/Images/MOOC/Waterfall_edge-1.pdf differ
+[1mdiff --git a/Documents/Images/MOOC/Waterfall_edge-2.pdf b/Documents/Images/MOOC/Waterfall_edge-2.pdf[m
+[1mindex dfbbe0b..2d78d1b 100644[m
+Binary files a/Documents/Images/MOOC/Waterfall_edge-2.pdf and b/Documents/Images/MOOC/Waterfall_edge-2.pdf differ
+[1mdiff --git a/Documents/Images/MOOC/Waterfall_feat-1.pdf b/Documents/Images/MOOC/Waterfall_feat-1.pdf[m
+[1mindex f2955fa..0b20abc 100644[m
+Binary files a/Documents/Images/MOOC/Waterfall_feat-1.pdf and b/Documents/Images/MOOC/Waterfall_feat-1.pdf differ
+[1mdiff --git a/Documents/Images/MOOC/Waterfall_feat-2.pdf b/Documents/Images/MOOC/Waterfall_feat-2.pdf[m
+[1mindex 5040d1d..f433888 100644[m
+Binary files a/Documents/Images/MOOC/Waterfall_feat-2.pdf and b/Documents/Images/MOOC/Waterfall_feat-2.pdf differ
+[1mdiff --git a/Evaluation/Generated/Qualitative Evaluation.ipynb b/Evaluation/Generated/Qualitative Evaluation.ipynb[m
+[1mindex 5191c4b..110f65f 100644[m
+[1m--- a/Evaluation/Generated/Qualitative Evaluation.ipynb[m	
+[1m+++ b/Evaluation/Generated/Qualitative Evaluation.ipynb[m	
+[36m@@ -980,9 +980,9 @@[m
+  ],[m
+  "metadata": {[m
+   "kernelspec": {[m
+[31m-   "display_name": ".venv39",[m
+[32m+[m[32m   "display_name": "Python (textClustEnv)",[m
+    "language": "python",[m
+[31m-   "name": "python3"[m
+[32m+[m[32m   "name": "textclustenv"[m
+   },[m
+   "language_info": {[m
+    "codemirror_mode": {[m
+[36m@@ -994,7 +994,7 @@[m
+    "name": "python",[m
+    "nbconvert_exporter": "python",[m
+    "pygments_lexer": "ipython3",[m
+[31m-   "version": "3.9.13"[m
+[32m+[m[32m   "version": "3.11.5"[m
+   }[m
+  },[m
+  "nbformat": 4,[m
+[1mdiff --git a/Evaluation/visualize.ipynb b/Evaluation/visualize.ipynb[m
+[1mindex bd6b045..c060b0e 100644[m
+[1m--- a/Evaluation/visualize.ipynb[m
+[1m+++ b/Evaluation/visualize.ipynb[m
+[36m@@ -318,9 +318,9 @@[m
+  ],[m
+  "metadata": {[m
+   "kernelspec": {[m
+[31m-   "display_name": "Python 3",[m
+[32m+[m[32m   "display_name": "Python [conda env:.conda-.shapEnv]",[m
+    "language": "python",[m
+[31m-   "name": "python3"[m
+[32m+[m[32m   "name": "conda-env-.conda-.shapEnv-py"[m
+   },[m
+   "language_info": {[m
+    "codemirror_mode": {[m
+[36m@@ -332,7 +332,7 @@[m
+    "name": "python",[m
+    "nbconvert_exporter": "python",[m
+    "pygments_lexer": "ipython3",[m
+[31m-   "version": "3.9.6"[m
+[32m+[m[32m   "version": "3.11.15"[m
+   }[m
+  },[m
+  "nbformat": 4,[m
+[1mdiff --git a/Explainers/Shapley4TGNN/Explainer.py b/Explainers/Shapley4TGNN/Explainer.py[m
+[1mindex 9f3e341..fbbf73f 100644[m
+[1m--- a/Explainers/Shapley4TGNN/Explainer.py[m
+[1m+++ b/Explainers/Shapley4TGNN/Explainer.py[m
+[36m@@ -344,7 +344,7 @@[m [mclass ShapleyExplainerFeatures(Explainer):[m
+         """[m
+         [m
+         if type(self.feature_names) is not np.ndarray and self.feature_names == True:[m
+[31m-            labels = ["Structure", "Timing"] + [str(i + 2) for i in range(num_feat)][m
+[32m+[m[32m            labels = ["Structure", "Timing"] + ["Feat. " + str(i + 2) for i in range(num_feat)][m
+         elif self.feature_names is not None and self.feature_names is not False:[m
+             labels = np.concat((np.array(["Structure", "Timing"]), self.feature_names))[m
+         else:[m
+[1mdiff --git a/Explainers/Shapley4TGNN/Plots.py b/Explainers/Shapley4TGNN/Plots.py[m
+[1mindex 3db930b..111d9ef 100644[m
+[1m--- a/Explainers/Shapley4TGNN/Plots.py[m
+[1m+++ b/Explainers/Shapley4TGNN/Plots.py[m
+[36m@@ -70,10 +70,10 @@[m [mdef _prepare_dataset(explanation_flatten: list, k: int, base_date:Optional[date][m
+     df["Shap_value_abs"] = df["Shap_value"].abs()[m
+ [m
+     # Sum Shapley values by edge to compute total contribution[m
+[31m-    df_sum = df.groupby("Edge", observed=False).sum()[m
+[31m-    df_sum[["Timing", "Feat_name", "Feat_value"]] = [0, "Sum", 0][m
+[32m+[m[32m    df_sum = df.groupby("Edge", observed=False)[["Shap_value_abs", "Shap_value"]].sum()[m
+[32m+[m[32m    df_sum[["Feat_name", "Feat_value"]] = ["Sum", 0][m
+     df_sum = df_sum.reset_index(names=["Edge"])[m
+[31m-    df_sum = df_sum.drop(columns=["Edge_type", "Timing", "Src", "Dst"])[m
+[32m+[m[32m    #df_sum = df_sum.drop(columns=["Timing"])[m
+     df_sum = df_sum.merge(df[["Edge", "Edge_type", "Timing", "Src", "Dst"]].drop_duplicates(),[m
+                           on="Edge", how="left")[m
+ [m
+[36m@@ -91,6 +91,7 @@[m [mdef _prepare_dataset(explanation_flatten: list, k: int, base_date:Optional[date][m
+     others = others.groupby("Edge", observed=False).sum()[m
+     others[["Timing", "Feat_name", "Feat_value"]] = [0, "Others", 0][m
+     others = others.reset_index(names="Edge")[m
+[32m+[m[32m    others = others[others["Shap_value_abs"] != 0][m
+     others = others.drop(columns=["Edge_type", "Timing"])[m
+     others = others.merge(df[["Edge", "Edge_type", "Timing"]].drop_duplicates(),[m
+                           on="Edge", how="left")[m
+[36m@@ -116,7 +117,7 @@[m [mdef _prepare_dataset(explanation_flatten: list, k: int, base_date:Optional[date][m
+     # Special labels for 'Sum' and 'Others'[m
+     df_top_k_per_edge.loc[df_top_k_per_edge.IsSum, "Label_feat"] = \[m
+         df_top_k_per_edge[df_top_k_per_edge.IsSum].apply([m
+[31m-            lambda x: f"{x.Src} to {x.Dst} @ {int(x.Timing) if base_date is None else base_date + timedelta(days=x.Timing)}", axis=1[m
+[32m+[m[32m            lambda x: f"{x.Src} → {x.Dst} (t={x.Timing if base_date is None else base_date + timedelta(days=x.Timing)})", axis=1[m
+         )[m
+     df_top_k_per_edge.loc[df_top_k_per_edge.IsOthers, "Label_feat"] = "Others"[m
+ [m
+[36m@@ -136,7 +137,8 @@[m [mdef waterfall([m
+     bar_width = 0.5,[m
+     head_length = 0.01,[m
+     base_date:Optional[date] = None,[m
+[31m-    space_per_bar = 0.5[m
+[32m+[m[32m    space_per_bar = 0.5,[m
+[32m+[m[32m    inverse_colors = False[m
+ ):[m
+     """[m
+     Create a horizontal waterfall plot from feature-level Shapley explanations.[m
+[36m@@ -215,7 +217,11 @@[m [mdef waterfall([m
+             # Sum row: total effect of edge[m
+             y = y - 1.1[m
+             y_positions.append(y)[m
+[31m-            color = RED if row.Shap_value > 0 else BLUE[m
+[32m+[m[32m            if not inverse_colors:[m
+[32m+[m[32m                color = RED if row.Shap_value > 0 else BLUE[m
+[32m+[m[32m            else:[m
+[32m+[m[32m                color = BLUE if row.Shap_value > 0 else RED[m
+[32m+[m[41m            [m
+             ax.arrow([m
+                 start_sum, y, row.Shap_value, 0,[m
+                 length_includes_head=True,[m
+[36m@@ -237,7 +243,10 @@[m [mdef waterfall([m
+             # Individual feature row[m
+             y = y - 0.6[m
+             y_positions.append(y)[m
+[31m-            color = LIGHTRED if row.Shap_value > 0 else LIGHTBLUE[m
+[32m+[m[32m            if not inverse_colors:[m
+[32m+[m[32m                color = LIGHTRED if row.Shap_value > 0 else LIGHTBLUE[m
+[32m+[m[32m            else:[m
+[32m+[m[32m                color = LIGHTBLUE if row.Shap_value > 0 else LIGHTRED[m
+             ax.arrow([m
+                 start, y, row.Shap_value, 0,[m
+                 length_includes_head=True,[m
+[36m@@ -286,7 +295,7 @@[m [mdef waterfall([m
+     ax.set_axisbelow(True)[m
+ [m
+     # Title and y-axis labels[m
+[31m-    ax.set_title(f"Prediction from Node {src} to Node {dst} @ {ts if base_date is None else base_date + timedelta(days=ts)} (Target: {target})")[m
+[32m+[m[32m    ax.set_title(f"Prediction from Node {src} to Node {dst} at time {ts if base_date is None else base_date + timedelta(days=ts)}")[m
+     ax.set_yticks(sorted(y_positions))[m
+     ax.set_yticklabels(df_top_k_per_edge.Label_feat.iloc[::-1])[m
+     ax.set_ylim(y_positions[-1] - 1.5, y_positions[0] + 1.5)[m

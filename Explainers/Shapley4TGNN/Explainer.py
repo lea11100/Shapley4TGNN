@@ -344,7 +344,7 @@ class ShapleyExplainerFeatures(Explainer):
         """
         
         if type(self.feature_names) is not np.ndarray and self.feature_names == True:
-            labels = ["Structure", "Timing"] + [str(i + 2) for i in range(num_feat)]
+            labels = ["Structure", "Timing"] + ["Feat. " + str(i + 2) for i in range(num_feat)]
         elif self.feature_names is not None and self.feature_names is not False:
             labels = np.concat((np.array(["Structure", "Timing"]), self.feature_names))
         else:
